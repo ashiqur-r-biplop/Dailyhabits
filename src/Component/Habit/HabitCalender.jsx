@@ -17,7 +17,7 @@ const HabitCalender = () => {
   const [handleClick, setHandleClick] = useState(0);
   const [habits, setHabits] = useState([]);
   const allHabit = getAllHabits();
-console.log(handleClick);
+  console.log(handleClick);
   const goToPreviousMonth = () => {
     setCurrentDate(currentDate.subtract(1, "month"));
   };
@@ -32,7 +32,7 @@ console.log(handleClick);
 
   return (
     <>
-      <main className="mx-auto  overflow-x-scroll">
+      <main className="mx-auto  overflow-x-scroll md:overflow-visible">
         <div className={`flex justify-center`}>
           <button onClick={goToPreviousMonth} className="cursor-pointer pe-3">
             <AiFillCaretLeft></AiFillCaretLeft>
@@ -42,7 +42,7 @@ console.log(handleClick);
             <AiFillCaretRight></AiFillCaretRight>
           </button>
         </div>
-        <section className="mt-5 ">
+        <section className="mt-5">
           <div>
             <div className="flex border">
               <div className="flex items-center border-r-2 w-[200px]">
@@ -56,7 +56,7 @@ console.log(handleClick);
                     key={index}
                     className={`
                 ${
-                  selectDate.isSame(date, "day") ? "bg-gray-500 text-white" : ""
+                  selectDate.isSame(date, "day") ? "bg-gray-500 text-white border-black " : ""
                 }
                 "cover-date rounded-full transition-all  h-full flex flex-col justify-between`}
                   >
@@ -97,9 +97,7 @@ console.log(handleClick);
                       </h2>
                     </div>
                     <div className="flex">
-                      {[
-                        ...Array(totalDays - (habit?.totalDays - totalDays)),
-                      ].map((_, index) => {
+                      {[...Array(totalDays)].map((_, index) => {
                         const date = firstDayOfMonth.add(index, "day");
                         return (
                           <div

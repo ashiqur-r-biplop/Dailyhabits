@@ -7,14 +7,15 @@ const NewHabitModal = ({ control, setControl, totalDays }) => {
     console.log(totalDays);
     const newHabit = e.target.new_habit.value;
     const goal = e.target.goal.value;
-    createNewHabit(newHabit, goal,totalDays);
+    createNewHabit(newHabit, goal, totalDays);
     setControl(!control);
+    e.target.reset()
   };
   return (
     <div>
       <input type="checkbox" id="my_modal_7" className="modal-toggle" />
       <div className="modal">
-        <div className="modal-box !rounded-none py-10  -mt-[400px]">
+        <div className="modal-box !rounded-none py-10  -mt-[200px]">
           <h3 className="text-lg py-2">Create New Habit</h3>
           <hr />
           <div className="mt-5 py-5">
