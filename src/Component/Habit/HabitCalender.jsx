@@ -1,16 +1,23 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { AiFillCaretRight, AiFillCaretLeft } from "react-icons/ai";
+import NewHabitModal from "../Modal/NewHabitModal";
+import { getAllHabits } from "../../Utilitis/CreateNewHabit";
 
 const HabitCalender = () => {
   const [currentDate, setCurrentDate] = useState(dayjs());
+  const [control, setControl] = useState(true);
   const days = ["S", "M", "T", "W", "T", "F", "S"];
   const [selectDate, setSelectDate] = useState(dayjs());
   const firstDayOfMonth = currentDate.startOf("month");
   const lastDayOfMonth = currentDate.endOf("month");
   const totalDays = lastDayOfMonth.date();
-
+  const [handleClick, setHandleClick] = useState(0);
+  const [habits, setHabits] = useState([]);
+  const allHabit = getAllHabits();
+console.log(handleClick);
   const goToPreviousMonth = () => {
     setCurrentDate(currentDate.subtract(1, "month"));
   };
@@ -18,61 +25,125 @@ const HabitCalender = () => {
   const goToNextMonth = () => {
     setCurrentDate(currentDate.add(1, "month"));
   };
+  useEffect(() => {
+    setHabits(allHabit);
+    console.log(allHabit);
+  }, [control]);
 
   return (
-    <main className="mx-auto">
-      <div className={`flex justify-center`}>
-        <button onClick={goToPreviousMonth} className="cursor-pointer pe-3">
-          <AiFillCaretLeft></AiFillCaretLeft>
-        </button>
-        <h2 className="text-xl">{currentDate.format("MMMM YYYY")}</h2>
-        <button onClick={goToNextMonth} className="cursor-pointer ps-3">
-          <AiFillCaretRight></AiFillCaretRight>
-        </button>
-      </div>
-      <section>
-        <div className="flex border mt-10">
-          <div className="flex items-center border-r-2 w-[200px]">
-            <h2 className="text-2xl text-center w-full px-5">Habits</h2>
-          </div>
+    <>
+      <main className="mx-auto  overflow-x-scroll">
+        <div className={`flex justify-center`}>
+          <button onClick={goToPreviousMonth} className="cursor-pointer pe-3">
+            <AiFillCaretLeft></AiFillCaretLeft>
+          </button>
+          <h2 className="text-xl">{currentDate.format("MMMM YYYY")}</h2>
+          <button onClick={goToNextMonth} className="cursor-pointer ps-3">
+            <AiFillCaretRight></AiFillCaretRight>
+          </button>
+        </div>
+        <section className="mt-5 ">
+          <div>
+            <div className="flex border">
+              <div className="flex items-center border-r-2 w-[200px]">
+                <h2 className="text-2xl text-center w-full">Habits</h2>
+              </div>
 
-          {[...Array(totalDays)].map((_, index) => {
-            const date = firstDayOfMonth.add(index, "day");
-            return (
-              <div
-                key={index}
-                className={`
+              {[...Array(totalDays)].map((_, index) => {
+                const date = firstDayOfMonth.add(index, "day");
+                return (
+                  <div
+                    key={index}
+                    className={`
                 ${
-                  selectDate.isSame(date, "day")
-                    ? "bg-gray-500 text-white"
-                    : " "
+                  selectDate.isSame(date, "day") ? "bg-gray-500 text-white" : ""
                 }
                 "cover-date rounded-full transition-all  h-full flex flex-col justify-between`}
-              >
-                <p
-                  className={`border text-center p-[3px] ${
-                    currentDate.isSame(date, "day")
-                      ? "bg-gray-500 text-white"
-                      : ""
-                  }`}
-                >
-                  {days[date.format("d")]}
-                </p>
-                <p className="border text-center px-[10px] py-3">{date.date()}</p>
-              </div>
-            );
-          })}
+                  >
+                    <p
+                      className={`border text-center p-[3px] ${
+                        selectDate.isSame(date, "day")
+                          ? "bg-gray-500 text-white"
+                          : ""
+                      }`}
+                    >
+                      {days[date.format("d")]}
+                    </p>
+                    <p className="border text-center w-[35px] p-2">
+                      {date.date()}
+                    </p>
+                  </div>
+                );
+              })}
 
-          <div className="flex justify-center items-center border-l-2">
-            <h2 className="text-2xl px-5">Goal</h2>
+              <div className="flex justify-center items-center border-l-2 w">
+                <h2 className="text-2xl px-5">Goal</h2>
+              </div>
+              <div className="flex justify-center items-center border-l-2">
+                <h2 className="text-2xl px-5">Achieved</h2>
+              </div>
+            </div>
+
+            {habits &&
+              habits.map((habit, i) => {
+                return (
+                  <div className="flex" key={i}>
+                    <div
+                      key={i}
+                      className="border flex items-center border-r-2 w-[201px]"
+                    >
+                      <h2 className="text-2xl text-center w-[205px]">
+                        {habit?.Habit}
+                      </h2>
+                    </div>
+                    <div className="flex">
+                      {[
+                        ...Array(totalDays - (habit?.totalDays - totalDays)),
+                      ].map((_, index) => {
+                        const date = firstDayOfMonth.add(index, "day");
+                        return (
+                          <div
+                            className={`flex flex-col ${
+                              selectDate.isSame(date, "day")
+                                ? "border-l border-r border-black  text-white"
+                                : ""
+                            }`}
+                            key={index}
+                            onClick={() => setHandleClick(date)}
+                          >
+                            <p
+                              className={`border text-center  w-[35px] p-4`}
+                            ></p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <div className="border flex items-center border-r-2 ">
+                      <h2 className="text-2xl text-center w-[91px] px-5">
+                        {habit?.goal}
+                      </h2>
+                    </div>
+                    <div className="border flex items-center border-r-2 w-full  py-4 ">
+                      <h2 className="text-2xl text-center w-full px-5"></h2>
+                    </div>
+                  </div>
+                );
+              })}
           </div>
-          <div className="flex justify-center items-center border-l-2">
-            <h2 className="text-2xl px-5">Achieved</h2>
-          </div>
-        </div>
-        <button className="border mt-2 px-2 py-1 ">+ New Habit</button>
-      </section>
-    </main>
+          <label
+            htmlFor="my_modal_7"
+            className="btn border mt-2 px-2 py-1 bg-transparent"
+          >
+            + New Habit
+          </label>
+        </section>
+      </main>
+      <NewHabitModal
+        totalDays={totalDays}
+        setControl={setControl}
+        control={control}
+      ></NewHabitModal>
+    </>
   );
 };
 

@@ -71,7 +71,7 @@ const Navbar = () => {
             {!user ? (
               <>
                 <Link to="/login">
-                  <button className="text-gray-600 font-semibold">Login</button>
+                  <button className="text-gray-600 font-semibold ms-3">Login</button>
                 </Link>
               </>
             ) : (
