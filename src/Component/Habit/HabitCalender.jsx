@@ -17,7 +17,6 @@ const HabitCalender = () => {
   const [handleClick, setHandleClick] = useState(0);
   const [habits, setHabits] = useState([]);
   const allHabit = getAllHabits();
-  console.log(handleClick);
   const goToPreviousMonth = () => {
     setCurrentDate(currentDate.subtract(1, "month"));
   };
@@ -27,8 +26,20 @@ const HabitCalender = () => {
   };
   useEffect(() => {
     setHabits(allHabit);
-    console.log(allHabit);
+    // console.log(allHabit);
   }, [control]);
+
+  const setHandleDayClick = (habitNumber, year, month, date) => {
+    const clickedDate = dayjs()
+      .year(year)
+      .month(month)
+      .date(date)
+      .startOf("day");
+    const clickedYear = clickedDate.year();
+    const clickedMonth = clickedDate.month();
+    const clickedDay = clickedDate.date();
+    console.log({year:clickedYear , month: clickedMonth + 1,date: clickedDay});
+  };
 
   return (
     <>
@@ -56,7 +67,9 @@ const HabitCalender = () => {
                     key={index}
                     className={`
                 ${
-                  selectDate.isSame(date, "day") ? "bg-gray-500 text-white border-black " : ""
+                  selectDate.isSame(date, "day")
+                    ? "bg-gray-500 text-white border-black "
+                    : ""
                 }
                 "cover-date rounded-full transition-all  h-full flex flex-col justify-between`}
                   >
@@ -99,6 +112,9 @@ const HabitCalender = () => {
                     <div className="flex">
                       {[...Array(totalDays)].map((_, index) => {
                         const date = firstDayOfMonth.add(index, "day");
+                        const year = date.year();
+                        const month = date.month();
+                        const day = date.date();
                         return (
                           <div
                             className={`flex flex-col ${
@@ -107,7 +123,14 @@ const HabitCalender = () => {
                                 : ""
                             }`}
                             key={index}
-                            onClick={() => setHandleClick(date)}
+                            onClick={() =>
+                              setHandleDayClick(
+                                habit.habitNumber,
+                                year,
+                                month,
+                                day
+                              )
+                            }
                           >
                             <p
                               className={`border text-center  w-[35px] p-4`}
