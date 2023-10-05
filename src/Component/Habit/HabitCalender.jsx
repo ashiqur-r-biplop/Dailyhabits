@@ -38,7 +38,11 @@ const HabitCalender = () => {
     const clickedYear = clickedDate.year();
     const clickedMonth = clickedDate.month();
     const clickedDay = clickedDate.date();
-    console.log({year:clickedYear , month: clickedMonth + 1,date: clickedDay});
+    console.log({
+      year: clickedYear,
+      month: clickedMonth + 1,
+      date: clickedDay,
+    });
   };
 
   return (
@@ -119,7 +123,7 @@ const HabitCalender = () => {
                           <div
                             className={`flex flex-col ${
                               selectDate.isSame(date, "day")
-                                ? "border-l border-r border-black  text-white"
+                                ? "border-l border-r  border-black  text-white"
                                 : ""
                             }`}
                             key={index}
@@ -133,19 +137,19 @@ const HabitCalender = () => {
                             }
                           >
                             <p
-                              className={`border text-center  w-[35px] p-4`}
+                              className={`border text-center border-t-0 w-[35px] p-4`}
                             ></p>
                           </div>
                         );
                       })}
                     </div>
-                    <div className="border flex items-center border-r-2 ">
+                    <div className="border flex items-center border-r-2">
                       <h2 className="text-2xl text-center w-[91px] px-5">
                         {habit?.goal}
                       </h2>
                     </div>
-                    <div className="border flex items-center border-r-2 w-full  py-4 ">
-                      <h2 className="text-2xl text-center w-full px-5"></h2>
+                    <div className="border flex items-center border-r-2 w-full">
+                      <h2 className="text-2xl text-center w-full px-5">0</h2>
                     </div>
                   </div>
                 );
