@@ -11,6 +11,8 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { app } from "../firebase/firebase.config";
+import axios from "axios";
+// import axios from "axios";
 
 const AuthProvider = ({ children }) => {
   const auth = getAuth(app);
@@ -33,22 +35,23 @@ const AuthProvider = ({ children }) => {
     const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       // get and set token\
-      // if (currentUser) {
-      //   console.log("data");
-      //   axios
-      //     .post("https://creativa-design-hub-server-site.vercel.app/jwt", {
-      //       email: currentUser.email,
-      //     })
-      //     .then((data) => {
-      //       localStorage.setItem("access-token", data.data.token);
-      //       setLoading(false);
-      //       setReload(false);
-      //     });
-      // } else {
-      //   localStorage.removeItem("access-token");
-      //   setLoading(false);
-      // }
-      setLoading(false);
+      
+      if (currentUser) {
+        axios
+          .post("https://habit-server-eight.vercel.app/jwt", {
+            email: currentUser.email,
+          })
+          .then((data) => {
+            // console.log(data);
+            localStorage.setItem("access-token", data.data.token);
+            setLoading(false);
+            setReload(false);
+          });
+      } else {
+        localStorage.removeItem("access-token");
+        setLoading(false);
+      }
+      // setLoading(false);
       // setReload(false);
     });
     return () => {

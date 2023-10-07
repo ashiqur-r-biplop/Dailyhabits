@@ -53,7 +53,7 @@ const Navbar = () => {
                 <button className="border border-[#8000f6] text-[#8000f6] px-2 py-1 rounded-md ml-3">
                   Upgrade to premium
                 </button>
-                <div className="ms-3">np
+                <div className="ms-3">
                   {theme ? (
                     <BsFillMoonFill
                       onClick={handleToggle}

@@ -4,7 +4,8 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../AuthProvider/AuthProvider";
 import { toast } from "react-toastify";
-
+import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
 const Register = () => {
   const [terms, setTerms] = useState(false);
   const [toggleIcon, setToggleIcon] = useState(true);
@@ -20,7 +21,6 @@ const Register = () => {
     "3) DailyHabits does not use your data for any marketing purposes. You will only receive emails critical to the service.",
     "4) DailyHabits is not liable for any loss of data due to unforced errors that are outside our control from the external services that we use, such as Amazon Web Services where we host our servers and database.",
   ];
-
   const handleRegister = (e) => {
     e.preventDefault();
     const form = e?.target;
@@ -36,12 +36,22 @@ const Register = () => {
     } else {
       signUp(email, password)
         .then((result) => {
-          const loggedUser = result.user;
+          const saveUser = result.user;
+          // console.log(email);
+          axios.post("https://habit-server-eight.vercel.app/users", {email: email})
+          .then((data) => {
+            if (data.insertedId) {
+              toast("Register successful!");
+              form.reset();
+              navigate(from, { replace: true });
+              setErrorMassage("");
+              setSuccessMessage("");
+            }
+          });
+          form.reset();
+          navigate(from, { replace: true });
           setErrorMassage("");
           setSuccessMessage("");
-
-          navigate(from, { replace: true });
-          form.reset();
         })
         .catch((err) => {
           setErrorMassage(err.message);
@@ -102,7 +112,7 @@ const Register = () => {
               <label htmlFor="Password" className="py-5">
                 <span className="text-red-600">*</span> Password
               </label>
-              
+
               <div className="relative">
                 <input
                   type={toggleIcon ? "password" : "text"}
@@ -112,7 +122,9 @@ const Register = () => {
                   onChange={handlePassword}
                 />
                 {errorMassage && <p className="text-red-600">{errorMassage}</p>}
-                {successMessage && <p className="text-green-600">{successMessage}</p>}
+                {successMessage && (
+                  <p className="text-green-600">{successMessage}</p>
+                )}
                 <div className="absolute top-2 right-4 text-xl cursor-pointer">
                   {toggleIcon ? (
                     <FaEye onClick={() => setToggleIcon(!toggleIcon)}></FaEye>

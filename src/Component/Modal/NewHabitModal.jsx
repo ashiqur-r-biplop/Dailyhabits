@@ -1,15 +1,36 @@
 /* eslint-disable react/prop-types */
-import { createNewHabit } from "../../Utilitis/CreateNewHabit";
+import { useContext } from "react";
+import { AuthContext } from "../../AuthProvider/AuthProvider";
+import useAxiosSecure from "../../Hook/useAxiosSecure";
 
 const NewHabitModal = ({ control, setControl, totalDays }) => {
+  const { user } = useContext(AuthContext);
+  const { axiosSecure } = useAxiosSecure();
+  // console.log(user.email);
   const handleNewHabit = (e) => {
     e.preventDefault();
     console.log(totalDays);
+    const form = e.target
     const newHabit = e.target.new_habit.value;
     const goal = e.target.goal.value;
-    createNewHabit(newHabit, goal, totalDays);
-    setControl(!control);
-    e.target.reset()
+    const habit = {
+      habit: newHabit,
+      goal: goal,
+      userEmail: user.email,
+    };
+    console.log(habit);
+    axiosSecure
+      .post("/habit", habit)
+      .then((data) => {
+        if (data.data.insertedId) {
+          form.reset();
+          setControl(!control);
+          console.log("ok");
+        }
+      })
+      .catch((err) => console.log(err));
+    // createNewHabit(newHabit, goal, totalDays);
+    // e.target.reset();
   };
   return (
     <div>
