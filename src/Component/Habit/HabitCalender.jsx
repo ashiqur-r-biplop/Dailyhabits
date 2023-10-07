@@ -104,8 +104,8 @@ const HabitCalender = () => {
 
   return (
     <>
-      <main className="mx-auto  overflow-x-scroll md:overflow-visible">
-        <div className={`flex justify-center`}>
+      <main className="mx-auto  md:overflow-x-scroll lg:overflow-x-visible w-full">
+        <div className={`flex justify-center w-full`}>
           <button onClick={goToPreviousMonth} className="cursor-pointer pe-3">
             <AiFillCaretLeft></AiFillCaretLeft>
           </button>
@@ -114,11 +114,13 @@ const HabitCalender = () => {
             <AiFillCaretRight></AiFillCaretRight>
           </button>
         </div>
-        <section className="mt-5">
-          <div>
-            <div className="flex border">
+        <section className="mt-5 w-full">
+          <div className="w-full">
+            <div className="flex border w-full">
               <div className="flex items-center border-r-2 w-[200px]">
-                <h2 className="text-2xl text-center w-full">Habits</h2>
+                <h2 className="text-xl text-center w-full text-[#212BF5]">
+                  Habits
+                </h2>
               </div>
 
               {[...Array(totalDays)].map((_, index) => {
@@ -129,32 +131,38 @@ const HabitCalender = () => {
                     className={`
                 ${
                   selectDate.isSame(date, "day")
-                    ? "bg-gray-500 text-white border-black "
+                    ? "bg-[#4B4B4B] text-white border border-b-0 border-[#4B4B4B] "
                     : ""
                 }
-                "cover-date rounded-full transition-all  h-full flex flex-col justify-between`}
+                "cover-date transition-all  h-full flex flex-col justify-between`}
                   >
                     <p
-                      className={`border text-center p-[3px] ${
+                      className={`border text-center p-[3px] text-sm ${
                         selectDate.isSame(date, "day")
-                          ? "bg-gray-500 text-white"
+                          ? "bg-[#4B4B4B] text-white border-0 border-b"
                           : ""
                       }`}
                     >
                       {days[date.format("d")]}
                     </p>
-                    <p className="border text-center w-[35px] p-2">
+                    <p
+                      className={`border text-center w-[35px] p-2  ${
+                        selectDate.isSame(date, "day")
+                          ? "bg-[#4B4B4B] text-white border-0"
+                          : ""
+                      }`}
+                    >
                       {date.date()}
                     </p>
                   </div>
                 );
               })}
 
-              <div className="flex justify-center items-center border-l-2 w">
-                <h2 className="text-2xl px-5">Goal</h2>
+              <div className="flex justify-center items-center border-l-2 w-[92px]">
+                <h2 className="text-xm px-5 text-[#212BF5]">Goal</h2>
               </div>
               <div className="flex justify-center items-center border-l-2">
-                <h2 className="text-2xl px-5">Achieved</h2>
+                <h2 className="text-xm px-5 text-[#212BF5] w-full">Achieved</h2>
               </div>
             </div>
 
@@ -172,9 +180,9 @@ const HabitCalender = () => {
                   >
                     <div
                       key={i}
-                      className="border flex items-center border-r-2 w-[201px]  cursor-move"
+                      className="flex items-center border-r-2 w-[201px]  cursor-move"
                     >
-                      <h2 className="text-2xl text-center w-[205px]">
+                      <h2 className="text-2xl border text-center w-[205px] ">
                         <span>{habit?.habit}</span>
                       </h2>
                     </div>
@@ -188,9 +196,13 @@ const HabitCalender = () => {
                           <div
                             className={`flex flex-col ${
                               selectDate.isSame(date, "day")
-                                ? "border-l border-r border-black  text-white"
+                                ? "border-l border-r border-[#4B4B4B]  text-white"
                                 : ""
-                            } `}
+                            } ${
+                              i === myArray.length - 1 &&
+                              selectDate.isSame(date, "day") &&
+                              "border-b border-[#4B4B4B]"
+                            }`}
                             key={index}
                             onClick={() =>
                               setHandleDayClick(
