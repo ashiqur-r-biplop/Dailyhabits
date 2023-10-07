@@ -9,10 +9,11 @@ import { getAllHabits } from "../../Utilitis/CreateNewHabit";
 import useAxiosSecure from "../../Hook/useAxiosSecure";
 import { AuthContext } from "../../AuthProvider/AuthProvider";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import UpdateHabitModal from "../Modal/UpdateHabitModal";
 
-const HabitCalender = () => {
+const HabitCalender = ({ control, setControl }) => {
   const [currentDate, setCurrentDate] = useState(dayjs());
-  const [control, setControl] = useState(true);
+
   const days = ["S", "M", "T", "W", "T", "F", "S"];
   const [selectDate, setSelectDate] = useState(dayjs());
   const firstDayOfMonth = currentDate.startOf("month");
@@ -20,7 +21,7 @@ const HabitCalender = () => {
   const totalDays = lastDayOfMonth.date();
   const [handleClick, setHandleClick] = useState(0);
   const [habits, setHabits] = useState([]);
-
+  const [habit, setHabit] = useState({});
   const { axiosSecure } = useAxiosSecure();
   const { user } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
@@ -37,6 +38,7 @@ const HabitCalender = () => {
       .get(`/habit/${user?.email}`)
       .then((data) => {
         setHabits(data.data);
+        console.log(data.data);
         setLoading(false);
       })
       .catch((err) => console.log(err));
@@ -116,7 +118,7 @@ const HabitCalender = () => {
         </div>
         <section className="mt-5 w-full">
           <div className="w-full">
-            <div className="flex border w-full">
+            <div className={`flex  border w-full`}>
               <div className="flex items-center border-r-2 w-[200px]">
                 <h2 className="text-xl text-center w-full text-[#212BF5]">
                   Habits
@@ -180,10 +182,14 @@ const HabitCalender = () => {
                   >
                     <div
                       key={i}
-                      className="flex items-center border-r-2 w-[201px]  cursor-move"
+                      className="flex items-center border-r-2 w-[201px]  cursor-move relative"
                     >
-                      <h2 className="text-2xl border text-center w-[205px] ">
-                        <span>{habit?.habit}</span>
+                      <h2 className={`text-2xl border text-center w-[205px]`}>
+                        <span>
+                          {habit?.habit.length > 15
+                            ? `${habit?.habit.slice(0, 10)}...`
+                            : habit?.habit}
+                        </span>
                       </h2>
                     </div>
                     <div className="flex">
@@ -221,10 +227,21 @@ const HabitCalender = () => {
                       })}
                     </div>
                     <div className="border flex items-center border-r-2">
-                      <h2 className="text-2xl text-center w-[91px] px-5">
-                        {habit?.goal}
-                      </h2>
+                      <label
+                        onClick={() => setHabit(habit)}
+                        htmlFor="my_modal_10"
+                        className={`${
+                          parseInt(habit?.goal) > 1000
+                            ? "text-xs"
+                            : parseInt(habit?.goal) > 100
+                            ? "text-sm"
+                            : "text-2xl"
+                        } text-center w-[91px] px-5`}
+                      >
+                        {parseInt(habit?.goal)}
+                      </label>
                     </div>
+
                     <div className="border flex items-center border-r-2 w-full">
                       <h2 className="text-2xl text-center w-full px-5">
                         {habit.archive}
@@ -241,13 +258,17 @@ const HabitCalender = () => {
             + New Habit
           </label>
         </section>
-        <section></section>
       </main>
       <NewHabitModal
         totalDays={totalDays}
         setControl={setControl}
         control={control}
       ></NewHabitModal>
+      <UpdateHabitModal
+        habit={habit}
+        setControl={setControl}
+        control={control}
+      />
     </>
   );
 };

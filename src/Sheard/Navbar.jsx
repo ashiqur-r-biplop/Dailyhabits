@@ -25,6 +25,7 @@ const Navbar = () => {
   }, []);
   const handleToggle = () => {
     const bodyElement = document.getElementsByTagName("body")[0];
+    // console.log(bodyElement);
     const currentTheme = bodyElement.getAttribute("data-theme");
     const newTheme = currentTheme === "light" ? "dark" : "light";
     localStorage.setItem("theme", newTheme);

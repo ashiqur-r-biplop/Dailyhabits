@@ -19,14 +19,14 @@ const Notes = ({ setNoteControl, noteControl }) => {
       .get(`/notes/${user?.email}`)
       .then((data) => {
         setNotes(data.data);
-        console.log(data.data);
+        // console.log(data.data);
         setLoading(false);
       })
       .catch((err) => console.log(err));
   }, [noteControl]);
-  console.log(notes, 23);
+  // console.log(notes, 23);
   const handleNoteDelete = (id) => {
-    console.log(id);
+    // console.log(id);
     axiosSecure
       .delete(`/delete-note/${id}`)
       .then((res) => {
@@ -44,7 +44,7 @@ const Notes = ({ setNoteControl, noteControl }) => {
       <div className="max-w-[1000px] mt-[100px] mx-auto">
         <div>
           <div className="flex justify-between items-center">
-            <h2 className="text-[#7E53F6]">Note</h2>
+            <h2 className="text-[#7E53F6]">Notes</h2>
             <label
               htmlFor="my_modal_8"
               className=" border mt-2 px-2 py-1 bg-transparent"
@@ -58,7 +58,7 @@ const Notes = ({ setNoteControl, noteControl }) => {
             </div>
           )}
           {notes.map((note, i) => {
-            console.log(note);
+            // console.log(note);
             const { _id, text, email, date } = note;
             return (
               <div key={i} className="border p-5 my-3">

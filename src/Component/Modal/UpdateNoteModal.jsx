@@ -26,7 +26,7 @@ const UpdateNoteModal = ({ note, setNoteControl, noteControl }) => {
       <input type="checkbox" id="my_modal_9" className="modal-toggle" />
       <div className="modal">
         <div className="modal-box !rounded-none py-10  -mt-[200px]">
-          <h3 className="text-lg py-2">Create New Habit</h3>
+          <h3 className="text-lg py-2">Edit Note</h3>
           <hr />
           <div className="mt-5 py-5">
             <textarea

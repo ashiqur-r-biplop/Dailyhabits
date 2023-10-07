@@ -5,10 +5,14 @@ import NoteModal from "../../Component/Modal/NoteModal";
 
 const Habit = () => {
   const [noteControl, setNoteControl] = useState(false);
+  const [control, setControl] = useState(true);
   return (
     <>
       <div className="container mx-auto">
-        <HabitCalender></HabitCalender>
+        <HabitCalender
+          setControl={setControl}
+          control={control}
+        ></HabitCalender>
         <Notes
           setNoteControl={setNoteControl}
           noteControl={noteControl}
