@@ -110,11 +110,7 @@ const HabitCalender = ({ control, setControl }) => {
     // update the actual array
     setHabits(_habitItems);
   };
-  function isDateDisabled(date) {
-    const currentDate = dayjs();
-    console.log(date.isBefore(currentDate, "day"));
-    return date.isBefore(currentDate, "day");
-  }
+ 
 
   if (loading) {
     return (
