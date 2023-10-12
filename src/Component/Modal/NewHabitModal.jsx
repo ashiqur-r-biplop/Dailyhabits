@@ -2,6 +2,7 @@
 import { useContext } from "react";
 import { AuthContext } from "../../AuthProvider/AuthProvider";
 import useAxiosSecure from "../../Hook/useAxiosSecure";
+import dayjs from "dayjs";
 
 const NewHabitModal = ({ control, setControl, totalDays }) => {
   const { user } = useContext(AuthContext);
@@ -9,15 +10,18 @@ const NewHabitModal = ({ control, setControl, totalDays }) => {
   // console.log(user.email);
   const handleNewHabit = (e) => {
     e.preventDefault();
-    console.log(totalDays);
+    const startDate = `${dayjs().year()}-${dayjs().month() + 1}-${dayjs().date()}`;
+    console.log(startDate);
     const form = e.target;
     const newHabit = e.target.new_habit.value;
     const goal = e.target.goal.value;
+
     if (totalDays >= goal) {
       const habit = {
         habit: newHabit,
         goal: goal,
         userEmail: user.email,
+        startDate: startDate,
       };
       console.log(habit);
       axiosSecure
@@ -32,9 +36,8 @@ const NewHabitModal = ({ control, setControl, totalDays }) => {
         .catch((err) => console.log(err));
       // createNewHabit(newHabit, goal, totalDays);
       // e.target.reset();
-    }
-    else{
-      alert("This month's number does not match your goal's number")
+    } else {
+      alert("This month's number does not match your goal's number");
     }
   };
   return (

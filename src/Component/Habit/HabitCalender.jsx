@@ -13,7 +13,9 @@ import UpdateHabitModal from "../Modal/UpdateHabitModal";
 
 const HabitCalender = ({ control, setControl }) => {
   const [currentDate, setCurrentDate] = useState(dayjs());
-
+  const [previousMoth, setPreviousMonth] = useState(
+    currentDate.subtract(1, "month")
+  );
   const days = ["S", "M", "T", "W", "T", "F", "S"];
   const [selectDate, setSelectDate] = useState(dayjs());
   const firstDayOfMonth = currentDate.startOf("month");
@@ -25,6 +27,7 @@ const HabitCalender = ({ control, setControl }) => {
   const { axiosSecure } = useAxiosSecure();
   const { user } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
+  const [obj, setObj] = useState([]);
   const goToPreviousMonth = () => {
     setCurrentDate(currentDate.subtract(1, "month"));
   };
@@ -32,20 +35,21 @@ const HabitCalender = ({ control, setControl }) => {
   const goToNextMonth = () => {
     setCurrentDate(currentDate.add(1, "month"));
   };
+
   // habits
   useEffect(() => {
     axiosSecure
       .get(`/habit/${user?.email}`)
       .then((data) => {
         setHabits(data.data);
-        console.log(data.data);
+        // console.log(data.data);
         setLoading(false);
       })
       .catch((err) => console.log(err));
     // console.log(allHabit);
   }, [control]);
   const lastElement = habits[habits.length - 1];
-  // console.log(lastElement);
+  // console.log(currentDate);
   const setHandleDayClick = (habitNumber, year, month, date) => {
     const clickedDate = dayjs()
       .year(year)
@@ -53,16 +57,31 @@ const HabitCalender = ({ control, setControl }) => {
       .date(date)
       .startOf("day");
     const clickedYear = clickedDate.year();
+    // console.log(clickedYear);
     const clickedMonth = clickedDate.month();
     const clickedDay = clickedDate.date();
     const Habit = habits.find((habit) => habit.habitNumber == habitNumber);
-    console.log({
-      ...Habit,
-      year: clickedYear,
-      month: clickedMonth + 1,
-      date: clickedDay,
-    });
+    const postedObject = {
+      clickedDay: {
+        Habit_Id: Habit?._id,
+        checkId: 1,
+        checked: true,
+        date: clickedDay,
+        month: clickedMonth + 1,
+        year: clickedYear,
+      },
+    };
+    axiosSecure
+      .patch(`/tracker/${Habit?._id}`, postedObject)
+      .then((res) => {
+        if (res.data.modifiedCount > 0) {
+          setControl(!control);
+        }
+      })
+      .catch((err) => console.log(err));
+    // console.log(postedObject);
   };
+  // console.log(habits);
   // save reference for dragItem and dragOverItem
 
   // drag start
@@ -91,6 +110,11 @@ const HabitCalender = ({ control, setControl }) => {
     // update the actual array
     setHabits(_habitItems);
   };
+  function isDateDisabled(date) {
+    const currentDate = dayjs();
+    console.log(date.isBefore(currentDate, "day"));
+    return date.isBefore(currentDate, "day");
+  }
 
   if (loading) {
     return (
@@ -170,85 +194,143 @@ const HabitCalender = ({ control, setControl }) => {
 
             {habits &&
               habits.map((habit, i, myArray) => {
-                return (
-                  <div
-                    className="flex"
-                    key={i}
-                    draggable
-                    onDragStart={(e) => (dragItem.current = i)}
-                    onDragEnter={(e) => (dragOverItem.current = i)}
-                    onDragEnd={handleSort}
-                    onDragOver={(e) => e.preventDefault()}
-                  >
-                    <div
-                      key={i}
-                      className="flex items-center border-r-2 w-[201px]  cursor-move relative"
-                    >
-                      <h2 className={`text-2xl border text-center w-[205px]`}>
-                        <span>
-                          {habit?.habit.length > 15
-                            ? `${habit?.habit.slice(0, 10)}...`
-                            : habit?.habit}
-                        </span>
-                      </h2>
-                    </div>
-                    <div className="flex">
-                      {[...Array(totalDays)].map((_, index) => {
-                        const date = firstDayOfMonth.add(index, "day");
-                        const year = date.year();
-                        const month = date.month();
-                        const day = date.date();
-                        return (
-                          <div
-                            className={`flex flex-col ${
-                              selectDate.isSame(date, "day")
-                                ? "border-l border-r border-[#4B4B4B]  text-white"
-                                : ""
-                            } ${
-                              i === myArray.length - 1 &&
-                              selectDate.isSame(date, "day") &&
-                              "border-b border-[#4B4B4B]"
-                            }`}
-                            key={index}
-                            onClick={() =>
-                              setHandleDayClick(
-                                habit.habitNumber,
-                                year,
-                                month,
-                                day
-                              )
-                            }
-                          >
-                            <p
-                              className={`border text-center border-t-0 w-[35px] p-4`}
-                            ></p>
-                          </div>
-                        );
-                      })}
-                    </div>
-                    <div className="border flex items-center border-r-2">
-                      <label
-                        onClick={() => setHabit(habit)}
-                        htmlFor="my_modal_10"
-                        className={`${
-                          parseInt(habit?.goal) > 1000
-                            ? "text-xs"
-                            : parseInt(habit?.goal) > 100
-                            ? "text-sm"
-                            : "text-2xl"
-                        } text-center w-[91px] px-5`}
+                const date = firstDayOfMonth.add(i, "day");
+                const checked = habits.find((h) => h._id === habit?._id);
+                console.log();
+                {
+                  return (
+                    selectDate.isAfter(currentDate, "day") !== true && (
+                      <div
+                        className={`flex`}
+                        id={`${habit?._id}`}
+                        key={i}
+                        draggable
+                        onDragStart={(e) => (dragItem.current = i)}
+                        onDragEnter={(e) => (dragOverItem.current = i)}
+                        onDragEnd={handleSort}
+                        onDragOver={(e) => e.preventDefault()}
                       >
-                        {parseInt(habit?.goal)}
-                      </label>
-                    </div>
+                        <div
+                          key={i}
+                          className="flex items-center border-r-2 w-[201px]  cursor-move relative"
+                        >
+                          <h2
+                            className={`text-2xl border text-center w-[205px]`}
+                          >
+                            <span>
+                              {habit?.habit.length > 15
+                                ? `${habit?.habit.slice(0, 10)}...`
+                                : habit?.habit}
+                            </span>
+                          </h2>
+                        </div>
+                        <div className="flex">
+                          {[...Array(totalDays)].map((_, index) => {
+                            const date = firstDayOfMonth.add(index, "day");
+                            // console.log(date);
+                            const year = date.year();
+                            const month = date.month();
+                            const day = date.date();
+                            console.log(day);
+                            const getCheckedDay = checked?.clickedDay?.find(
+                              (h) => {
+                                return (
+                                  h?.date == day &&
+                                  h?.month == month + 1 &&
+                                  h?.year == year
+                                );
+                              }
+                            );
+                            return (
+                              <div
+                                className={`flex flex-col ${
+                                  habit?._id
+                                }_${day} ${
+                                  selectDate.isSame(date, "day")
+                                    ? "border-l border-r border-[#4B4B4B]  text-white"
+                                    : ""
+                                } ${
+                                  i === myArray.length - 1 &&
+                                  selectDate.isSame(date, "day") &&
+                                  "border-b border-[#4B4B4B]"
+                                }`}
+                                key={index}
+                                onClick={() =>
+                                  setHandleDayClick(
+                                    habit.habitNumber,
+                                    year,
+                                    month,
+                                    day
+                                  )
+                                }
+                              >
+                                <button
+                                  disabled={
+                                    selectDate.isBefore(date, "day") == true
+                                  }
+                                  className={`border text-center cursor-pointer border-t-0 w-[35px] p-4 ${
+                                    selectDate.isBefore(date, "day") == true &&
+                                    "cursor-not-allowed"
+                                  } ${
+                                    getCheckedDay?.Habit_Id == habit?._id &&
+                                    getCheckedDay?.checkId > 0 &&
+                                    getCheckedDay?.checked == true
+                                      ? `${
+                                          habit.habitNumber == 1
+                                            ? "bg-[#FDF2D0]"
+                                            : habit.habitNumber == 2
+                                            ? "bg-[#BFDFCE]"
+                                            : habit.habitNumber == 3
+                                            ? "bg-[#CCDAF5]"
+                                            : habit.habitNumber == 4
+                                            ? "bg-[#D8D2E7]"
+                                            : habit.habitNumber % 4 === 1
+                                            ? "bg-[#FDF2D0]"
+                                            : habit.habitNumber % 4 === 2
+                                            ? "bg-[#BFDFCE]"
+                                            : habit.habitNumber % 4 === 3
+                                            ? "bg-[#CCDAF5]"
+                                            : "bg-[#D8D2E7]"
+                                        }`
+                                      : ``
+                                  }`}
+                                ></button>
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <div className="border flex items-center border-r-2">
+                          <label
+                            onClick={() => setHabit(habit)}
+                            htmlFor="my_modal_10"
+                            className={`${
+                              parseInt(habit?.goal) > 1000
+                                ? "text-xs"
+                                : parseInt(habit?.goal) > 100
+                                ? "text-sm"
+                                : "text-2xl"
+                            } text-center w-[91px] px-5`}
+                          >
+                            {parseInt(habit?.goal)}
+                          </label>
+                        </div>
 
-                    <div className="border flex items-center border-r-2 w-full">
-                      <h2 className="text-2xl text-center w-full px-5">
-                        {habit.archive}
-                      </h2>
-                    </div>
-                  </div>
-                );
+                        <div
+                          className={`border flex items-center ${
+                            habit?.goal <= habit.archive &&
+                            selectDate.isSame(currentDate)
+                              ? "bg-green-400"
+                              : ""
+                          } border-r-2 w-full`}
+                        >
+                          <h2 className="text-2xl text-center w-full px-5">
+                            {selectDate.isSame(currentDate) ? habit.archive : 0}
+                          </h2>
+                        </div>
+                      </div>
+                    )
+                  );
+                }
               })}
           </div>
           <label
