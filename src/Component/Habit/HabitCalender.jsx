@@ -264,9 +264,9 @@ const HabitCalender = ({ control, setControl }) => {
                                   disabled={
                                     selectDate.isBefore(date, "day") == true
                                   }
-                                  className={`border text-center cursor-pointer border-t-0 w-[35px] p-4 ${
-                                    selectDate.isBefore(date, "day") == true &&
-                                    "cursor-not-allowed"
+                                  className={`border text-center border-t-0 w-[35px] p-4 ${
+                                    selectDate.isBefore(date, "day") == true ?
+                                    "cursor-not-allowed" : "cursor-pointer"
                                   } ${
                                     getCheckedDay?.Habit_Id == habit?._id &&
                                     getCheckedDay?.checkId > 0 &&

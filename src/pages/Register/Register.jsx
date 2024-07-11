@@ -38,20 +38,19 @@ const Register = () => {
         .then((result) => {
           const saveUser = result.user;
           // console.log(email);
-          axios.post("https://habit-server-eight.vercel.app/users", {email: email})
-          .then((data) => {
-            if (data.insertedId) {
-              toast("Register successful!");
-              form.reset();
-              navigate(from, { replace: true });
-              setErrorMassage("");
-              setSuccessMessage("");
-            }
-          });
-          form.reset();
-          navigate(from, { replace: true });
-          setErrorMassage("");
-          setSuccessMessage("");
+          axios
+            .post("https://habit-server-eight.vercel.app/users", {
+              email: email,
+            })
+            .then((data) => {
+              if (data.data.insertedId) {
+                toast("Register successful!");
+                form.reset();
+                navigate("/habits", { replace: true });
+                setErrorMassage("");
+                setSuccessMessage("");
+              }
+            });
         })
         .catch((err) => {
           setErrorMassage(err.message);

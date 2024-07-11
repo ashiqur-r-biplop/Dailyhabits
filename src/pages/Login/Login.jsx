@@ -25,7 +25,7 @@ const Login = () => {
         const loggedUser = result.user;
         setSuccessMassage("login successful");
         setErrorMassage("");
-        navigate(from, { replace: true });
+        navigate("/habits", { replace: true });
       })
       .catch((err) => {
         setSuccessMassage("");
